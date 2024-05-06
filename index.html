@@ -70,7 +70,9 @@
     var joy3Param = { "title": "joystick3" };
     var Joy3 = new JoyStick('joy3Div', joy3Param);
     setInterval(function(){
-        writeOnCharacteristic(Joy3.GetX());
+        if (bleServer && bleServer.connected) {
+            writeOnCharacteristic(Joy3.GetX());
+        }
     }, 100);
 
     // Check if BLE is available in your Browser
