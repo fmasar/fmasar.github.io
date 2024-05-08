@@ -57,6 +57,8 @@
     var bleServiceFound;
     var sensorCharacteristicFound;
 
+    var buttonState = 0;
+
     // Connect Button (search for BLE Devices only if BLE is available)
     connectButton.addEventListener('click', (event) => {
         if (isWebBluetoothEnabled()){
@@ -68,15 +70,14 @@
     disconnectButton.addEventListener('click', disconnectDevice);
 
     // Write to the ESP32 LED Characteristic
-    onButton.addEventListener('click', () => writeOnButton(1));
-    offButton.addEventListener('click', () => writeOnButton(0));
+    onButton.addEventListener('click', () => buttonState = 1);
+    offButton.addEventListener('click', () => buttonState = 0);
 
     var joy3Param = { "title": "joystick3" };
     var Joy3 = new JoyStick('joy3Div', joy3Param);
     setInterval(function(){
         if (bleServer && bleServer.connected) {
-            writeOnCharacteristic(Joy3.GetX());
-            writeOnCharacteristic2(Joy3.GetY());
+            writeOnCharacteristic(Joy3.GetX(), Joy3.GetY(), buttonState);
         }
     }, 100);
 
@@ -149,16 +150,18 @@
         timestampContainer.innerHTML = getDateTime();
     }
 
-    function writeOnCharacteristic(value){
+    function writeOnCharacteristic(value, value2, value3){
         if (bleServer && bleServer.connected) {
             bleServiceFound.getCharacteristic(ledCharacteristic)
             .then(characteristic => {
                 console.log("Found the LED characteristic: ", characteristic.uuid);
-                const data = new Uint8Array([value]);
+                const data = new Uint8Array([value, value2, value3]);
                 return characteristic.writeValue(data);
             })
             .then(() => {
                 latestValueSent.innerHTML = value;
+                latestValueSent2.innerHTML = value2;
+                latestValueSentButton.innerHTML = value3;
                 console.log("Value written to LEDcharacteristic:", value);
             })
             .catch(error => {
