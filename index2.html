@@ -88,11 +88,11 @@ if (window.DeviceOrientationEvent) {
 
 const handleOrientationEvent = (frontToBack, leftToRight, rotateDegrees) => {
     if (bleServer && bleServer.connected) {
-            var moveX = Math.round(leftToRight * 10);
+            var moveX = Math.round(leftToRight * 5);
             if (moveX > 100) moveX = 100;
             else if (moveX < -100) moveX = -100;
 
-            var moveY = Math.round(frontToBack * 10);
+            var moveY = Math.round(frontToBack * 5);
             if (moveY > 100) moveY = 100;
             else if (moveY < -100) moveY = -100;
             writeOnCharacteristic(
