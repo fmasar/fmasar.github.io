@@ -180,6 +180,7 @@
             })
             .catch(error => {
                 console.error("Error writing to the button characteristic: ", error);
+                window.alert("Error writing to the button characteristic: ", error);
             });
         } else {
             console.error ("Bluetooth is not connected. Cannot write to characteristic.")
