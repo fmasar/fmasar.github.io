@@ -28,6 +28,7 @@
   <button id="onButton">ON</button>
   <button id="offButton">OFF</button>
   <p>Last value sent: <span id="valueSent"></span></p>
+  <p>Last value sent Button: <span id="valueSentButton"></span></p>
 </body>
 <script>
     // DOM Elements
@@ -37,6 +38,7 @@
     const offButton = document.getElementById('offButton');
     const retrievedValue = document.getElementById('valueContainer');
     const latestValueSent = document.getElementById('valueSent');
+    const latestValueSentButton = document.getElementById('valueSentButton');
     const bleStateContainer = document.getElementById('bleState');
     const timestampContainer = document.getElementById('timestamp');
 
@@ -173,7 +175,7 @@
                 return characteristic.writeValue(data);
             })
             .then(() => {
-                latestValueSent.innerHTML = value;
+                latestValueSentButton.innerHTML = value;
                 console.log("Value written to Buttoncharacteristic:", value);
             })
             .catch(error => {
