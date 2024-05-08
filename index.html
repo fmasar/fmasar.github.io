@@ -172,6 +172,10 @@
                 const data = new Uint8Array([value]);
                 return characteristic.writeValue(data);
             })
+            .then(() => {
+                latestValueSent.innerHTML = value;
+                console.log("Value written to Buttoncharacteristic:", value);
+            })
             .catch(error => {
                 console.error("Error writing to the button characteristic: ", error);
             });
