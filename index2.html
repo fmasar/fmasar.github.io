@@ -28,6 +28,7 @@
   <p>Last value sent: <span id="valueSent"></span></p>
   <p>Last value sent: <span id="valueSent2"></span></p>
   <p>Last value sent Button: <span id="valueSentButton"></span></p>
+  <p>Z: <span id="valueSentZ"></span></p>
 </body>
 <script>
     // DOM Elements
@@ -38,6 +39,7 @@
     const retrievedValue = document.getElementById('valueContainer');
     const latestValueSent = document.getElementById('valueSent');
     const latestValueSent2 = document.getElementById('valueSent2');
+    const latestValueSentZ = document.getElementById('valueSentZ');
     const latestValueSentButton = document.getElementById('valueSentButton');
     const bleStateContainer = document.getElementById('bleState');
     const timestampContainer = document.getElementById('timestamp');
@@ -125,6 +127,7 @@ function handleMotionEvent(event) {
   const y = event.accelerationIncludingGravity.y;
   const z = event.accelerationIncludingGravity.z;
 
+  latestValueSentZ.innerHTML = z;
   if (z > 15) {
     buttonState = 1;
   }
