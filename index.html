@@ -79,7 +79,7 @@
         if (bleServer && bleServer.connected) {
             writeOnCharacteristic(Joy3.GetX(), Joy3.GetY(), buttonState);
         }
-    }, 100);
+    }, 10);
 
     // Check if BLE is available in your Browser
     function isWebBluetoothEnabled() {
