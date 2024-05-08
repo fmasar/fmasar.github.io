@@ -24,13 +24,10 @@
     <h2>Fetched Value</h2>
     <p><span id="valueContainer">NaN</span></p>
     <p>Last reading: <span id="timestamp"></span></p>
-    <h2>Control GPIO 2</h2>
-    <button id="onButton">ON</button>
-    <button id="offButton">OFF</button>
-    <p>Last value sent: <span id="valueSent"></span></p>
-    <p>Last value sent: <span id="valueSent2"></span></p>
-    <p>Last value sent Button: <span id="valueSentButton"></span></p>
-    <p>Z: <span id="valueSentZ"></span></p>
+    <h2>Last sent values</h2>
+    <p>MoveX: <span id="valueSent"></span></p>
+    <p>MoveY: <span id="valueSent2"></span></p>
+    <p>Button: <span id="valueSentButton"></span></p>
 </body>
 <script>
     // DOM Elements
@@ -41,7 +38,6 @@
     const retrievedValue = document.getElementById('valueContainer');
     const latestValueSent = document.getElementById('valueSent');
     const latestValueSent2 = document.getElementById('valueSent2');
-    const latestValueSentZ = document.getElementById('valueSentZ');
     const latestValueSentButton = document.getElementById('valueSentButton');
     const bleStateContainer = document.getElementById('bleState');
     const timestampContainer = document.getElementById('timestamp');
@@ -70,10 +66,6 @@
 
     // Disconnect Button
     disconnectButton.addEventListener('click', disconnectDevice);
-
-    // Write to the ESP32 LED Characteristic
-    onButton.addEventListener('click', () => buttonState = 1);
-    offButton.addEventListener('click', () => buttonState = 0);
 
     // The wake lock sentinel.
     let wakeLock = null;
@@ -110,21 +102,21 @@
     const handleOrientationEvent = (frontToBack, leftToRight, rotateDegrees) => {
         if (bleServer && bleServer.connected) {
             // Get X value
-            var moveX = Math.round(leftToRight * 8);
+            var moveX = Math.round(leftToRight * 6);
 
-            if (Math.abs(moveX) < 50) moveX = 0;
-            else if (moveX <= -50) moveX += 25;
-            else if (moveX >= 50) moveX -= 25;
+            if (Math.abs(moveX) < 75) moveX = 0;
+            else if (moveX <= -75) moveX += 50;
+            else if (moveX >= 75) moveX -= 50;
 
             if (moveX > 100) moveX = 100;
             else if (moveX < -100) moveX = -100;
 
             // Get Y value
-            var moveY = Math.round(frontToBack * 8);
+            var moveY = Math.round(frontToBack * 6);
 
-            if (Math.abs(moveY) < 50) moveY = 0;
-            else if (moveY <= -50) moveY += 25;
-            else if (moveY >= 50) moveY -= 25;
+            if (Math.abs(moveY) < 75) moveY = 0;
+            else if (moveY <= -75) moveY += 50;
+            else if (moveY >= 75) moveY -= 50;
 
             if (moveY > 100) moveY = 100;
             else if (moveY < -100) moveY = -100;
@@ -220,49 +212,6 @@
                 })
                 .catch(error => {
                     console.error("Error writing to the LED characteristic: ", error);
-                });
-        } else {
-            console.error("Bluetooth is not connected. Cannot write to characteristic.")
-            window.alert("Bluetooth is not connected. Cannot write to characteristic. \n Connect to BLE first!")
-        }
-    }
-
-    function writeOnCharacteristic2(value) {
-        if (bleServer && bleServer.connected) {
-            bleServiceFound.getCharacteristic(ledCharacteristic2)
-                .then(characteristic => {
-                    console.log("Found the LED characteristic: ", characteristic.uuid);
-                    const data = new Uint8Array([value]);
-                    return characteristic.writeValue(data);
-                })
-                .then(() => {
-                    latestValueSent2.innerHTML = value;
-                    console.log("Value written to LEDcharacteristic:", value);
-                })
-                .catch(error => {
-                    console.error("Error writing to the LED characteristic: ", error);
-                });
-        } else {
-            console.error("Bluetooth is not connected. Cannot write to characteristic.")
-            window.alert("Bluetooth is not connected. Cannot write to characteristic. \n Connect to BLE first!")
-        }
-    }
-
-    function writeOnButton(value) {
-        if (bleServer && bleServer.connected) {
-            bleServiceFound.getCharacteristic(buttonCharacteristic)
-                .then(characteristic => {
-                    console.log("Found the button characteristic: ", characteristic.uuid);
-                    const data = new Uint8Array([value]);
-                    return characteristic.writeValue(data);
-                })
-                .then(() => {
-                    latestValueSentButton.innerHTML = value;
-                    console.log("Value written to Buttoncharacteristic:", value);
-                })
-                .catch(error => {
-                    console.error("Error writing to the button characteristic: ", error);
-                    window.alert(error);
                 });
         } else {
             console.error("Bluetooth is not connected. Cannot write to characteristic.")
