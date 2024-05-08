@@ -127,8 +127,7 @@ function handleMotionEvent(event) {
   const y = event.accelerationIncludingGravity.y;
   const z = event.accelerationIncludingGravity.z;
 
-  latestValueSentZ.innerHTML = z;
-  if (z > 15) {
+  if (z > 13) {
     buttonState = 1;
   }
 }
