@@ -63,8 +63,8 @@
     disconnectButton.addEventListener('click', disconnectDevice);
 
     // Write to the ESP32 LED Characteristic
-    onButton.addEventListener('touchstart', () => writeOnButton(1));
-    onButton.addEventListener('touchend', () => writeOnButton(0));
+    onButton.addEventListener('click', () => writeOnButton(1));
+    offButton.addEventListener('click', () => writeOnButton(0));
 
     var joy3Param = { "title": "joystick3" };
     var Joy3 = new JoyStick('joy3Div', joy3Param);
