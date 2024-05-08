@@ -21,26 +21,16 @@
     <button id="disconnectBleButton">Disconnect BLE Device</button>
     <p>BLE state: <strong><span id="bleState" style="color:#d13a30;">Disconnected</span></strong></p>
 
-    <h2>Fetched Value</h2>
-    <p><span id="valueContainer">NaN</span></p>
-    <p>Last reading: <span id="timestamp"></span></p>
     <h2>Last sent values</h2>
-    <p>MoveX: <span id="valueSent"></span></p>
-    <p>MoveY: <span id="valueSent2"></span></p>
-    <p>Button: <span id="valueSentButton"></span></p>
+    <p>MoveX: <span id="moveXData"></span></p>
+    <p>MoveY: <span id="moveYData"></span></p>
+    <p>Button: <span id="moveBData"></span></p>
 </body>
 <script>
     // DOM Elements
     const connectButton = document.getElementById('connectBleButton');
     const disconnectButton = document.getElementById('disconnectBleButton');
-    const onButton = document.getElementById('onButton');
-    const offButton = document.getElementById('offButton');
-    const retrievedValue = document.getElementById('valueContainer');
-    const latestValueSent = document.getElementById('valueSent');
-    const latestValueSent2 = document.getElementById('valueSent2');
-    const latestValueSentButton = document.getElementById('valueSentButton');
     const bleStateContainer = document.getElementById('bleState');
-    const timestampContainer = document.getElementById('timestamp');
 
     //Define BLE Device Specs
     var deviceName = 'ESP32';
@@ -75,11 +65,9 @@
             });
             console.log('Wake Lock is active');
         } catch (err) {
-            console.error(`${err.name}, ${err.message}`);
+            window.alert(`${err.name}, ${err.message}`);
         }
     };
-
-
 
     if (window.DeviceOrientationEvent) {
         window.addEventListener(
@@ -121,7 +109,8 @@
             buttonState = 0;
         }
     };
-
+    
+    window.addEventListener("devicemotion", handleMotionEvent, true);
     function handleMotionEvent(event) {
         const x = event.accelerationIncludingGravity.x;
         const y = event.accelerationIncludingGravity.y;
@@ -132,19 +121,12 @@
         }
     }
 
-    window.addEventListener("devicemotion", handleMotionEvent, true);
-
-
-
-
     // Check if BLE is available in your Browser
     function isWebBluetoothEnabled() {
         if (!navigator.bluetooth) {
-            console.log("Web Bluetooth API is not available in this browser!");
             bleStateContainer.innerHTML = "Web Bluetooth API is not available in this browser!";
             return false
         }
-        console.log('Web Bluetooth API supported in this browser.');
         return true
     }
 
@@ -156,7 +138,6 @@
             optionalServices: [bleService]
         })
             .then(device => {
-                console.log('Device Selected:', device.name);
                 bleStateContainer.innerHTML = 'Connected to device ' + device.name;
                 bleStateContainer.style.color = "#24af37";
                 device.addEventListener('gattservicedisconnected', onDisconnected);
@@ -164,7 +145,6 @@
             })
             .then(gattServer => {
                 bleServer = gattServer;
-                console.log("Connected to GATT Server");
                 return bleServer.getPrimaryService(bleService);
             })
             .then(service => {
@@ -187,18 +167,16 @@
         if (bleServer && bleServer.connected) {
             bleServiceFound.getCharacteristic(ledCharacteristic)
                 .then(characteristic => {
-                    console.log("Found the LED characteristic: ", characteristic.uuid);
                     const data = new Uint8Array([value, value2, value3]);
                     return characteristic.writeValue(data);
                 })
                 .then(() => {
-                    latestValueSent.innerHTML = value;
-                    latestValueSent2.innerHTML = value2;
-                    latestValueSentButton.innerHTML = value3;
-                    console.log("Value written to LEDcharacteristic:", value);
+                    document.getElementById('moveXData').innerHTML = value;
+                    document.getElementById('moveYData').innerHTML = value2;
+                    document.getElementById('moveBData').innerHTML = value3;
                 })
                 .catch(error => {
-                    console.error("Error writing to the LED characteristic: ", error);
+                    console.error("Error writing: ", error);
                 });
         } else {
             console.error("Bluetooth is not connected. Cannot write to characteristic.")
@@ -207,12 +185,10 @@
     }
 
     function disconnectDevice() {
-        console.log("Disconnect Device.");
         if (bleServer && bleServer.connected) {
             bleServer.connected = false
         } else {
             // Throw an error if Bluetooth is not connected
-            console.error("Bluetooth is not connected.");
             window.alert("Bluetooth is not connected.")
         }
     }
