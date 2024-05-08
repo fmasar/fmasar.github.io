@@ -72,7 +72,7 @@
     var Joy3 = new JoyStick('joy3Div', joy3Param);
     setInterval(function(){
         if (bleServer && bleServer.connected) {
-            writeOnCharacteristic(Joy3.GetX()*10);
+            writeOnCharacteristic(Joy3.GetX());
         }
     }, 100);
 
