@@ -110,10 +110,13 @@ const handleOrientationEvent = (frontToBack, leftToRight, rotateDegrees) => {
             var moveX = Math.round(leftToRight * 8);
             if (moveX > 100) moveX = 100;
             else if (moveX < -100) moveX = -100;
+            else if (Math.abs(moveX) < 25) moveX = 0;
 
             var moveY = Math.round(frontToBack * 8);
             if (moveY > 100) moveY = 100;
             else if (moveY < -100) moveY = -100;
+            else if (Math.abs(moveY) < 25) moveY = 0;
+
             writeOnCharacteristic(
                 moveX,
                 moveY,
