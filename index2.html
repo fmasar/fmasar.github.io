@@ -71,17 +71,37 @@
     onButton.addEventListener('click', () => buttonState = 1);
     offButton.addEventListener('click', () => buttonState = 0);
 
-    let gyroscope = new Gyroscope({ frequency: 60 });
 
-gyroscope.addEventListener("reading", (e) => {
+if (window.DeviceOrientationEvent) {
+  window.addEventListener(
+    "deviceorientation",
+    (event) => {
+      const rotateDegrees = event.alpha; // alpha: rotation around z-axis
+      const leftToRight = event.gamma; // gamma: left to right
+      const frontToBack = event.beta; // beta: front back motion
+
+      handleOrientationEvent(frontToBack, leftToRight, rotateDegrees);
+    },
+    true,
+  );
+}
+
+const handleOrientationEvent = (frontToBack, leftToRight, rotateDegrees) => {
     if (bleServer && bleServer.connected) {
+            var moveX = Math.round(leftToRight * 10);
+            if (moveX > 100) moveX = 100;
+            else if (moveX < -100) moveX = -100;
+
+            var moveY = Math.round(frontToBack * 10);
+            if (moveY > 100) moveY = 100;
+            else if (moveY < -100) moveY = -100;
             writeOnCharacteristic(
-                Math.round(gyroscope.x * 10),
-                Math.round(gyroscope.y * 10),
+                moveX,
+                moveY,
                 buttonState);
         }
-});
-gyroscope.start();
+};
+
 
 
     // Check if BLE is available in your Browser
