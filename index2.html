@@ -116,8 +116,22 @@ const handleOrientationEvent = (frontToBack, leftToRight, rotateDegrees) => {
                 moveX,
                 moveY,
                 buttonState);
+            buttonState = 0;
         }
 };
+
+function handleMotionEvent(event) {
+  const x = event.accelerationIncludingGravity.x;
+  const y = event.accelerationIncludingGravity.y;
+  const z = event.accelerationIncludingGravity.z;
+
+  if (z > 15) {
+    buttonState = 1;
+  }
+}
+
+window.addEventListener("devicemotion", handleMotionEvent, true);
+
 
 
 
