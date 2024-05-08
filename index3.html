@@ -110,7 +110,7 @@
     const handleOrientationEvent = (frontToBack, leftToRight, rotateDegrees) => {
         if (bleServer && bleServer.connected) {
             // Get X value
-            var moveX = Math.round(leftToRight * 6);
+            var moveX = Math.round(leftToRight * 8);
 
             if (Math.abs(moveX) < 50) moveX = 0;
             else if (moveX <= -50) moveX += 25;
@@ -120,7 +120,7 @@
             else if (moveX < -100) moveX = -100;
 
             // Get Y value
-            var moveY = Math.round(frontToBack * 6);
+            var moveY = Math.round(frontToBack * 8);
 
             if (Math.abs(moveY) < 50) moveY = 0;
             else if (moveY <= -50) moveY += 25;
@@ -178,6 +178,11 @@
                 bleServer = gattServer;
                 console.log("Connected to GATT Server");
                 return bleServer.getPrimaryService(bleService);
+            })
+            .then(service => {
+                bleServiceFound = service;
+                console.log("Service discovered:", service.uuid);
+                return service.getCharacteristic(sensorCharacteristic);
             })
             .catch(error => {
                 console.log('Error: ', error);
