@@ -1,9 +1,5 @@
 <!--
-  Rui Santos
-  Complete project details at https://RandomNerdTutorials.com/esp32-web-bluetooth/
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files.
-  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+  The code is inspired by project at https://randomnerdtutorials.com/esp32-web-bluetooth/ by Rui Santos
 -->
 
 <!DOCTYPE html>
@@ -186,7 +182,9 @@
 
     function disconnectDevice() {
         if (bleServer && bleServer.connected) {
-            bleServer.connected = false
+            bleStateContainer.innerHTML = "Device Disconnected";
+            bleStateContainer.style.color = "#d13a30";
+            bleServer.disconnect();
         } else {
             // Throw an error if Bluetooth is not connected
             window.alert("Bluetooth is not connected.")
